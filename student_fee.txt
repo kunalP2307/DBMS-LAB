@@ -1,0 +1,54 @@
+mysql> CREATE TABLE StudentFess (PNR INT,Name VARCHAR(20),Class VARCHAR(20),FeesPaid INT);
+Query OK, 0 rows affected (0.00 sec)
+	
+INSERT INTO StudentFess values(123,'Kunal','TE',30000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO StudentFess values(124,'Sahil','TE',29000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO StudentFess values(125,'Vivek','TE',19000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> RENAME TABLE StudentFess TO StudentFees;
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+DROP PROCEDURE checkFeesStatus;
+
+DELIMITER //
+CREATE PROCEDURE checkFeesStatus(no INT)
+BEGIN  
+	DECLARE temp INT DEFAULT 0;
+	SELECT FeesPaid INTO temp FROM StudentFees WHERE PNR = no;
+	IF temp < 30000 THEN
+		SELECT 'Not Paid Full Fees' as Message;
+	ELSE 
+		SELECT 'No Fees Due' as Message;
+	END IF;
+END
+//
+
+DELIMITER ;
+
+mysql> call checkFeesStatus(123);
++-------------+
+| Message     |
++-------------+
+| No Fees Due |
++-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call checkFeesStatus(124);
++--------------------+
+| Message            |
++--------------------+
+| Not Paid Full Fees |
++--------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+

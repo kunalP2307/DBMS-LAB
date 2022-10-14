@@ -1,0 +1,24 @@
+DROP PROCEDURE validateTranscation;
+
+DELIMITER //
+CREATE PROCEDURE validateTranscation(id INT,ammount INT)
+BEGIN  
+	DECLARE invalid_trans CONDITION FOR SQLSTATE '45001';
+	DECLARE temp INT DEFAULT 0;
+	
+	SELECT Balance INTO temp FROM Account WHERE Cid = id;
+	IF (temp - ammount) < 0 THEN
+		SIGNAL invalid_trans
+		SET MESSAGE_TEXT = 'Cannot Complete Transaction, Transaction Ammount is greater than Account Balance';
+	ELSE 
+		UPDATE Account SET Balance = (temp - ammount) WHERE Cid = id;
+		Select 'Transactio Successful' as Mesaage;
+	END IF;
+END
+//
+
+DELIMITER ;
+
+call checkAttendece(76);
+
+

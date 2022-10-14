@@ -1,0 +1,124 @@
+Que 1:
+
+/*Creating Table*/
+
+CREATE TABLE CustMstr(
+	cust_no INT,
+	fname VARCHAR(20),
+	lname VARCHAR(20)
+	);
+	
+CREATE TABLE AddDets(
+	code_no INT,
+	add1 VARCHAR(20),
+	add2 VARCHAR(20),
+	state VARCHAR(20),
+	city VARCHAR(20),
+	pincode INT	
+	);
+	
+/*Inserting Records*/
+b
+INSERT INTO CustMstr values(101,'xyz','pqr');
+INSERT INTO AddDets values(101,'address 1','address 2','Maharashtra','Pune',411017);
+
+/* Retrieve the address of customer Fname as 'xyz' and Lname as 'pqr'*/
+SELECT * FROM AddDets WHERE code_no = (SELECT cust_no from CustMstr WHERE fname = 'xyz' AND lname = 'pqr');
+
+-------------------------------------------------------
+
+Que 2:
+
+/*Creating Tables*/
+
+CREATE TABLE AccFDCustDets(
+	code_no INT,
+	acc_fd_no INT	
+	);
+
+CREATE TABLE FDDets(
+	fd_no INT,
+	ammount INT
+	);
+	
+/*Inserting Records*/
+
+INSERT INTO AccFDCustDets values(101,201);
+INSERT INTO FDDets values(201,6000);
+
+/* List the customer holding fixed deposit of amount more than 5000 */
+
+SELECT * FROM CustMstr WHERE cust_no IN(SELECT code_no FROM AccFDCustDets WHERE acc_fd_no IN(SELECT fd_no FROM FDDets WHERE ammount > 5000));
+
+-------------------------------------------------------
+
+Que 3:
+/* Creating Tables */
+
+CREATE TABLE EmpMstr(
+	e_no INT,
+	f_name VARCHAR(20),
+	l_name VARCHAR(20),
+	m_name VARCHAR(20),
+	dept VARCHAR(20),
+	desg VARCHAR(20),
+	branch_no INT
+	);
+
+
+CREATE TABLE BranchMstr(
+	branch VARCHAR(20),
+	b_no INT	
+	);
+
+/* Inserting Records */	
+
+INSERT INTO EmpMstr values(101,'Kunal','Patil','Sadhana','Dev','Senior Dev',301);
+INSERT INTO BranchMstr values('Pune',301);
+INSERT INTO BranchMstr values('Mumbai',302);
+
+
+SELECT e_no,f_name,l_name,m_name,dept,desg,branch_no,branch FROM EmpMstr INNER JOIN BranchMstr ON EmpMstr.branch_no = BranchMstr.b_no;
+
+-------------------------------------------------------
+
+Que 4:
+
+/* Creating Tables */
+
+CREATE TABLE EmpMstr2(
+	emp_no INT,
+	f_name VARCHAR(20),
+	l_name VARCHAR(20),
+	m_name VARCHAR(20),
+	dept VARCHAR(20)	
+	);
+
+CREATE TABLE CntcDet(
+	code_no INT,
+	cntc_type VARCHAR(20),
+	cntc_data VARCHAR(20)
+	);
+	
+/* Inserting Values */
+
+INSERT INTO EmpMstr2 values(101,'Kunal','Patil','Sadhana','Dev');
+INSERT INTO EmpMstr2 values(102,'Sahil','Patil','Shobha','Testing');
+INSERT INTO EmpMstr2 values(103,'Vivek','Harwani','Rekha','Research');
+
+INSERT INTO CntcDet values(101,'Phone','7028991096');
+INSERT INTO CntcDet values(104,'email','contact@patil.ltd');
+INSERT INTO CntcDet values(106,'Phone','9834343212');
+
+/* List the employee details along with contact details using left outer join & right join */
+
+/* LEFT JOIN */
+SELECT emp_no,f_name,l_name,m_name,dept,cntc_type,cntc_data FROM EmpMstr2 LEFT JOIN CntcDet ON EmpMstr2.emp_no = CntcDet.code_no;
+
+/* RIGHT JOIN */
+SELECT emp_no,f_name,l_name,m_name,dept,cntc_type,cntc_data FROM EmpMstr2 RIGHT JOIN CntcDet ON EmpMstr2.emp_no = CntcDet.code_no;
+
+/* INNER JOIN */
+SELECT emp_no,f_name,l_name,m_name,dept,cntc_type,cntc_data FROM EmpMstr2 INNER JOIN CntcDet ON EmpMstr2.emp_no = CntcDet.code_no;
+
+

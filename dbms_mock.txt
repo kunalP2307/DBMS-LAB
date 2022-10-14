@@ -1,0 +1,60 @@
+/*Creating Tables*/
+CREATE TABLE Emp(
+	Id INT,
+	Salary INT
+	);
+	
+CREATE TABLE Incre_Sal(
+	Id INT,
+	Salary INT
+	);
+	
+/*Inserting Records*/
+INSERT INTO Emp values(101,22000);
+INSERT INTO Emp values(102,23000);
+INSERT INTO Emp values(103,24000);
+INSERT INTO Emp values(104,21000);
+INSERT INTO Emp values(105,18000);
+INSERT INTO Emp values(106,16000);
+
+/*Drop procedure*/
+DROP PROCEDURE increment_salary;
+
+/*Changing Delimiter*/
+
+DELIMITER //
+
+/*Creating Procedures*/
+CREATE PROCEDURE increment_salary()
+BEGIN 
+	DECLARE avg_sal INT;
+	DECLARE new_sal INT;
+	DECLARE new_id INT;
+	DECLARE no_record_found BOOLEAN DEFAULT FALSE;
+	DECLARE I INT DEFAULT 0;
+	DECLARE c_increment_sal CURSOR FOR SELECT id,salary FROM Emp;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET no_record_found = TRUE;
+	
+	SELECT AVG(Salary) INTO avg_sal FROM Emp;
+	SELECT avg_sal;
+	OPEN c_increment_sal;
+		l_record : LOOP
+			FETCH c_increment_sal INTO new_id,new_sal;
+				IF new_sal < avg_sal THEN
+					SET I = I + 1;
+					SET new_sal = new_sal + new_sal * 0.10;
+					INSERT INTO Incre_Sal values(new_id,new_sal);
+				END IF;
+			IF no_record_found THEN
+				LEAVE l_record;
+				CLOSE c_increment_sal;
+			END IF;
+		END LOOP l_record;
+		SELECT I as "Count of New Records Inserted";
+END;
+//
+
+DELIMITER ;
+
+/*calling procedure*/
+call increment_salary();

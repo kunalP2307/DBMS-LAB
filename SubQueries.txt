@@ -1,0 +1,286 @@
+Emp(E_number,E_name,Dept_no)
+Dept(Dept_no,Dept_name)
+Address(Dept_name,Dept_location)
+
+
+/* Creating Tables */
+
+CREATE TABLE Emp(
+	EId INT,
+	EName VARCHAR(20),
+	EDept VARCHAR(20)
+	);	
+
+CREATE TABLE Dept(
+	DNo INT,
+	DName VARCHAR(20)
+	);
+
+CREATE TABLE Address(
+	DName VARCHAR(20),
+	DLocation VARCHAR(20)
+	);
+
+/* Inserting Records */
+
+INSERT INTO Emp Values (1011,'Kunal','Developement');
+INSERT INTO Emp Values (1012,'Vivek','Developement');
+INSERT INTO Emp Values (1013,'Hardik','R&D');
+INSERT INTO Emp Values (1014,'Sahil','Testing');
+INSERT INTO Emp Values (1015,'Sonu','Testing');
+
+INSERT INTO Dept Values(001,'Developement');
+INSERT INTO Dept Values(002,'Testing');
+INSERT INTO Dept Values(003,'R&D');
+
+INSERT INTO Address Values('Developement','Pune');
+INSERT INTO Address Values('Testing','Mumbai');
+INSERT INTO Address Values('R&D','Banglore');
+
+/* Display the name of department for the employee having E_number
+‘1011’.*/
+
+SELECT EDept 
+FROM Emp
+WHERE ENo = 1011;
+
+/*Display the location of department where employee ‘Kunal’ is
+working.*/
+
+SELECT DLocation
+FROM Address 
+WHERE DName = (SELECT EDept from Emp WHERE EName = 'Kunal');
+ 
+/*Display total no. of employees working in each department.*/
+
+SELECT EDept,COUNT(*) as No_Of_Emps
+FROM Emp 
+GROUP BY EDept;
+
+2. Consider insurance database with following schema : [5]
+
+/* Creating Tables */
+
+CREATE TABLE Person(
+	DId INT,
+	DName VARCHAR(20),
+	DAddress VARCHAR(50)
+	);
+
+CREATE TABLE Car(
+	CId INT,
+	License VARCHAR(20),
+	Model VARCHAR(20),
+	CYear YEAR
+	);
+
+CREATE TABLE Accident(
+	ReportNo INT,
+	AccDate DATE,
+	Location VARCHAR(20)
+	);	
+	
+CREATE TABLE Owns(
+	DId INT,
+	License VARCHAR(20) 
+	);
+
+CREATE TABLE Participated(
+	DId INT,
+	CId INT,
+	ReportNo INT,
+	DamageAmm FLOAT
+	);
+
+/* Inserting Values into Tables */
+
+person(driver-id, name, address)
+car(license, model, year)
+accident (report - no, date, location)
+owns(driver-id,license)
+participated(driver-id,car,report-no,damage-amount)
+
+INSERT INTO Person Values(1001,'Kunal','Rahatani Pune');
+INSERT INTO Person Values(1002,'Vivek','Pimpri Pune');
+INSERT INTO Person Values(1003,'Sahil','Panchawati Nashik');
+INSERT INTO Person Values(1004,'Vaishnavi','Wardha Nashik');
+INSERT INTO Person Values(1005,'Gauri','Katraj Pune');
+
+INSERT INTO Car Values(2001,'L3001','Verna','2012');
+INSERT INTO Car Values(2002,'L3002','I 20','2013');
+INSERT INTO Car Values(2003,'L3003','Creta','2014');
+INSERT INTO Car Values(2004,'L3004','Elantra','2015');
+INSERT INTO Car Values(2005,'L3005','Santro','2016');
+INSERT INTO Car Values(2006,'L3006','Figo','2017');
+INSERT INTO Car Values(2007,'L3007','Polo','2019');
+
+INSERT INTO Accident Values(4001,'2016-07-23','Pune');
+INSERT INTO Accident Values(4002,'2002-03-12','Nashik');
+INSERT INTO Accident Values(4003,'2021-03-15','Nagpur');
+INSERT INTO Accident Values(4004,'2015-05-23','Buldhana');
+INSERT INTO Accident Values(4005,'2012-06-30','Amravati');
+INSERT INTO Accident Values(4006,'2011-08-05','Mumbai');
+
+INSERT INTO Owns Values(1001,'L3001');
+INSERT INTO Owns Values(1001,'L3002');
+INSERT INTO Owns Values(1002,'L3003');
+INSERT INTO Owns Values(1003,'L3004');
+INSERT INTO Owns Values(1004,'L3005');
+INSERT INTO Owns Values(1005,'L3006');
+INSERT INTO Owns Values(1001,'L3007');
+
+INSERT INTO Participated Values(1001,2001,4001,15000);
+INSERT INTO Participated Values(1001,2001,4002,12000);
+INSERT INTO Participated Values(1002,2002,4003,2000);
+INSERT INTO Participated Values(1003,2003,4004,51000);
+INSERT INTO Participated Values(1004,2004,4005,54000);
+INSERT INTO Participated Values(1005,2005,4006,69000);
+
+i) Find the total no. of people who owned cars that were involved in
+accidents in 2016.
+
+SELECT COUNT(DISTINCT(
+			SELECT Participated.DId from Participated,Accident WHERE Participated.ReportNo = 						Accident.ReportNo AND Accident.AccDate LIKE '2016%')) as 'Participated In 2016 Accident';
+
+
+ii) Retrieve the name of person whose address contains Pune.
+
+SELECT DName FROM Person Where DAddress Like '%Pune%';
+
+
+iii) Find the name of persons having more than two cars.
+
+SELECT DId From Owns Group By DId HAVING COUNT(DId) > 1;
+SELECT DName FROM Person WHERE Person.DId IN (SELECT DId From Owns Group By DId HAVING COUNT(DId) > 1);
+
+
+
+Q.3
+
+/* Creating Tables */
+
+CREATE TABLE Supplier(
+	SId INT,
+	SName VARCHAR(20),
+	SAddress VARCHAR(20)
+	);
+	
+CREATE TABLE Parts(
+	PId INT,
+	PName VARCHAR(20),
+	PColor VARCHAR(20)
+	);
+	
+CREATE TABLE Catalog(
+	SId INT,
+	PId INT,
+	Cost INT
+	);
+
+/* Inserting Records */
+INSERT INTO Supplier VALUES(101,'Kunal','Pune');
+INSERT INTO Supplier VALUES(102,'Vivek','Amravati');
+INSERT INTO Supplier VALUES(103,'Vaishnavi','Amravati');
+INSERT INTO Supplier VALUES(104,'Sahil','Nashik');
+INSERT INTO Supplier VALUES(105,'Gauri','Katraj');
+
+INSERT INTO Parts VALUES(201,'ABC','RED');
+INSERT INTO Parts VALUES(202,'XYZ','RED');
+INSERT INTO Parts VALUES(203,'PQR','GREEN');
+INSERT INTO Parts VALUES(204,'LMN','YELLOW');
+INSERT INTO Parts VALUES(205,'QWE','WHITE');
+INSERT INTO Parts VALUES(206,'IOP','BLUE');
+
+INSERT INTO Catalog VALUES(101,201,545);
+INSERT INTO Catalog VALUES(101,202,45);
+INSERT INTO Catalog VALUES(102,203,55);
+INSERT INTO Catalog VALUES(103,204,23);
+INSERT INTO Catalog VALUES(104,205,51);
+INSERT INTO Catalog VALUES(105,206,50);
+
+i) Find the names of suppliers who supply some red parts.
+
+SELECT SName FROM Supplier WHERE Supplier.SId IN (SELECT Catalog.SId FROM Catalog WHERE Catalog.PId IN (SELECT Parts.PId FROM Parts WHERE Parts.PColor = 'RED'));
+
+ii) Find the names of all parts whose cost is more than Rs 25
+
+SELECT PName FROM Parts WHERE Parts.PId IN (SELECT Catalog.PId FROM Catalog WHERE Catalog.Cost > 25);
+
+iii) Find names of all parts whose color is green.
+
+SELECT PName FROM Parts WHERE PColor = 'GREEN';
+
+
+iv) Find name of supplier and parts with its color and cost
+
+SELECT Supplier.SName,Parts.PName,Parts.PColor,Catalog.Cost FROM Catalog,Parts,Supplier WHERE Supplier.SId = Catalog.SId AND Catalog.PId = Parts.PId;
+
+/* ---------------------------------------------------------------------------------------- */
+
+Que 4
+
+account (acct-no, branch - name, balance)
+Depositor (cust - name, acct - no)
+borrower (cust-name, loan-no)
+loan (loan - no, branch - name, amount)
+
+/* Creating Tables */
+
+CREATE TABLE Account(
+	AccNo INT,
+	Branch VARCHAR(20),
+	Balance FLOAT
+	);
+	
+CREATE TABLE Depositor(
+	CName VARCHAR(20),
+	AccNo INT
+	);
+	
+CREATE TABLE Borrower(
+	CName VARCHAR(20),
+	LoanNo INT
+	);
+	
+CREATE TABLE Loan(
+	LoanNo INT,
+	Branch VARCHAR(20),
+	Ammount FLOAT
+);
+
+/* Inserting Records*/
+
+INSERT INTO Account VALUES(101,'Pune',2434.43);
+INSERT INTO Account VALUES(102,'Mumbai',434344);
+INSERT INTO Account VALUES(103,'Mumbai',25656);
+INSERT INTO Account VALUES(104,'Nagpur',2456567.34);
+INSERT INTO Account VALUES(105,'Redwood',5654677.454);
+INSERT INTO Account VALUES(106,'Redwood',5654677.454);
+
+
+INSERT INTO Depositor VALUES('Kunal',101);
+INSERT INTO Depositor VALUES('Vivek',102);
+INSERT INTO Depositor VALUES('Sahil',104);
+
+INSERT INTO Borrower VALUES('Gauri',4354);
+INSERT INTO Borrower VALUES('Sonu',3454);
+INSERT INTO Borrower VALUES('Sakshi',4344);
+INSERT INTO Borrower VALUES('Vaishnavi',1354);
+
+INSERT INTO Loan VALUES(201,'Pune',2334);
+INSERT INTO Loan VALUES(202,'Mumbai',5434);
+INSERT INTO Loan VALUES(203,'Redwood',45434);
+INSERT INTO Loan VALUES(204,'Mumbai',234);
+INSERT INTO Loan VALUES(205,'Redwood',2334);
+
+
+i) Find names of all customers who have a loan at the Redwood branch.
+ii) Find all customers who are having an account and loan or both.
+iii) Find average account balance at each branch.
+
+
+
+
+
+
+

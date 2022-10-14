@@ -1,0 +1,460 @@
+/*Creating Database */
+
+admin> use DB_LAB;
+switched to db DB_LAB
+-----------------------------------------------------------------------------------------------------
+
+/*Creatiing Collection*/
+
+DB_LAB> db.createCollection('StudentInfo')
+{ ok: 1 }
+------------------------------------------------------------------------------------------------------
+/* Insserting Documents in Collection*/
+
+/* Inserting One Document */
+DB_LAB> db.StudentInfo.insert({RollNo : 01, Name : 'Kunal Patil',Age : 20,MeritNo : 123})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("631c2a3b777f92d5fbbfed0c") }
+}
+
+/*Inserting Multiple Documents */
+DB_LAB> db.StudentInfo.insertMany([
+... 						{RollNo : 02, Name : 'Vivek Harwani',Age : 21,MeritNo : 122},
+... 						{RollNo : 03, Name : 'Sakshi Shimpi',Age : 18,MeritNo : 125},
+... 						{RollNo : 04, Name : 'Sahil Patil',Age : 19,MeritNo : 129},
+... 						{RollNo : 05, Name : 'Sonu Vishwakarma',Age : 18 , MeritNo : 120},
+... 						{RollNo : 06, Name : 'Gauri Ajgar',Age : 20,MeritNo : 127}
+... 						])
+
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("631c2b89777f92d5fbbfed0d"),
+    '1': ObjectId("631c2b89777f92d5fbbfed0e"),
+    '2': ObjectId("631c2b89777f92d5fbbfed0f"),
+    '3': ObjectId("631c2b89777f92d5fbbfed10"),
+    '4': ObjectId("631c2b89777f92d5fbbfed11")
+  }
+}
+
+------------------------------------------------------------------------------------------------------
+
+/*Retrieving All the Documents from Collectins*/
+
+DB_LAB> db.StudentInfo.find()
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 123
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0f"),
+    RollNo: 4,
+    Name: 'Sahil Patil',
+    Age: 19,
+    MeritNo: 129
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 127
+  }
+]
+
+/*Operators in MongoDB*/
+*****************************
+
+/*Comparison Operators*/
+
+#eq
+
+DB_LAB> db.StudentInfo.find({RollNo : {$eq : 01}})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 123
+  }
+]
+
+#gt
+
+DB_LAB> db.StudentInfo.find({RollNo : {$gt : 03}})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0f"),
+    RollNo: 4,
+    Name: 'Sahil Patil',
+    Age: 19,
+    MeritNo: 129
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 127
+  }
+]
+
+$in
+
+DB_LAB> db.StudentInfo.find({Name : {$in : ['Kunal Patil','Vivek Harwani']}})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 123
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  }
+]
+
+$ne
+
+DB_LAB> db.StudentInfo.find({RollNo : {$ne : 1}})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0f"),
+    RollNo: 4,
+    Name: 'Sahil Patil',
+    Age: 19,
+    MeritNo: 129
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 127
+  }
+]
+
+#nin
+
+DB_LAB> db.StudentInfo.find({RollNo : {$nin : [1,4,6]}})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  }
+]
+
+#Logical Operators 
+-------------------------------
+#and
+DB_LAB> db.StudentInfo.find({
+... 	$and : [
+... 		{Name : 'Kunal Patil'},
+... 		{RollNo : 1}
+... 	]
+... })
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 123
+  }
+]
+
+#not
+
+DB_LAB> db.StudentInfo.find({RollNo : {$not : {$in : [1,2,4]}}})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 127
+  }
+]
+
+#nor
+	
+DB_LAB> db.StudentInfo.find({$nor : [{MeritNo : {$gt : 125}},{RollNo : {$lt : 2}}]})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  }
+]
+
+#or
+
+DB_LAB> db.StudentInfo.find({$or : [{MeritNo : {$lt : 125}},{RollNo : {$gt : 2}}]}) 
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 123
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0d"),
+    RollNo: 2,
+    Name: 'Vivek Harwani',
+    Age: 21,
+    MeritNo: 122
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0e"),
+    RollNo: 3,
+    Name: 'Sakshi Shimpi',
+    Age: 18,
+    MeritNo: 125
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed0f"),
+    RollNo: 4,
+    Name: 'Sahil Patil',
+    Age: 19,
+    MeritNo: 129
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed10"),
+    RollNo: 5,
+    Name: 'Sonu Vishwakarma',
+    Age: 18,
+    MeritNo: 120
+  },
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 127
+  }
+]
+
+# Element Query Operators
+##############################
+
+#exists
+DB_LAB> db.StudentInfo.find({Marks : {$exists : true}})
+
+
+--------------------------------------------------------------------------------------------------
+
+# Update Operators
+
+#inc
+DB_LAB> db.StudentInfo.updateOne({MeritNo : 127},{$inc : {MeritNo : -1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+DB_LAB> db.StudentInfo.find({MeritNo : 126})
+[
+  {
+    _id: ObjectId("631c2b89777f92d5fbbfed11"),
+    RollNo: 6,
+    Name: 'Gauri Ajgar',
+    Age: 20,
+    MeritNo: 126
+  }
+]
+
+$min
+DB_LAB> db.StudentInfo.updateOne({RollNo : 1},{$min : {MeritNo : 120}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+DB_LAB> db.StudentInfo.find({RollNo : 1})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Name: 'Kunal Patil',
+    Age: 20,
+    MeritNo: 120
+  }
+]
+
+#rename
+
+DB_LAB> db.StudentInfo.updateMany({},{$rename : {"Name":"StdName"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 6,
+  modifiedCount: 6,
+  upsertedCount: 0
+}
+DB_LAB> db.StudentInfo.find({StdName : 'Kunal Patil'})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Age: 20,
+    MeritNo: 120,
+    StdName: 'Kunal Patil'
+  }
+]
+
+#set 
+
+DB_LAB> db.StudentInfo.updateOne({RollNo : 1},{$set : {StdName : 'Kunal',MeritNo : 1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+DB_LAB> db.StudentInfo.find({RollNo : 1})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Age: 20,
+    MeritNo: 1,
+    StdName: 'Kunal'
+  }
+]
+
+# unset
+DB_LAB> db.StudentInfo.updateOne({RollNo : 1},{$unset : {MeritNo : 0}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+DB_LAB> db.StudentInfo.find({RollNo : 1})
+[
+  {
+    _id: ObjectId("631c2a3b777f92d5fbbfed0c"),
+    RollNo: 1,
+    Age: 20,
+    StdName: 'Kunal'
+  }
+]
+
+
+
+

@@ -1,0 +1,63 @@
+
+CREATE TABLE Attendece(RollNo INT,Attendence INT);
+
+mysql> insert into Attendece values(76,80);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Attendece values(75,60);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Attendece values(74,90);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Attendece values(60,100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> alter table Attendece add column DetenStatus VARCHAR(2);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+
+DROP PROCEDURE checkAttendece;
+
+DELIMITER //
+CREATE PROCEDURE checkAttendece(roll INT)
+BEGIN  
+	DECLARE msg VARCHAR(20) DEFAULT '';
+	DECLARE a INT DEFAULT 0;
+	DECLARE D CONDITION FOR SQLSTATE '45000';
+	DECLARE ND CONDITION FOR SQLSTATE '45001';
+	SELECT Atten INTO a FROM Attendece WHERE RollNo = roll;
+	
+	IF a < 75 THEN
+		UPDATE Attendece SET DetenStatus = 'D' WHERE RollNo = roll;
+		SIGNAL D 
+		SET MESSAGE_TEXT = 'Term Work Not Granted';
+	ELSE 
+		UPDATE Attendece SET DetenStatus = 'ND' WHERE RollNo = roll;
+		SIGNAL ND 
+		SET MESSAGE_TEXT = 'Term Work Granted';
+	END IF;
+END
+//
+
+DELIMITER ;
+
+/*OUTPUT*/
+
+mysql> call checkAttendece(76);
+ERROR 1644 (45001): Term Work Granted
+mysql> select * from Attendece;
++--------+-------+-------------+
+| RollNo | Atten | DetenStatus |
++--------+-------+-------------+
+|     76 |    80 | ND          |
+|     75 |    60 | NULL        |
+|     74 |    90 | NULL        |
+|     60 |   100 | NULL        |
++--------+-------+-------------+
+4 rows in set (0.00 sec)
+
+
+

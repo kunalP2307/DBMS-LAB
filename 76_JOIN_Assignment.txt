@@ -1,0 +1,118 @@
+/*Creating Table C_Infor*/
+
+CREATE TABLE C_Info(
+	C_Id INT,
+	C_Name VARCHAR(20),
+	C_City VARCHAR(20)
+);
+
+/*Inserting Records*/
+
+INSERT INTO C_Info values(1, 'John','Nashik');
+INSERT INTO C_Info values(2, 'Seema', 'Aurangabad');
+INSERT INTO C_Info values(3, 'Amita','Nagar');
+INSERT INTO C_Info values(4, 'Rakesh', 'Pune');
+INSERT INTO C_Info values(5, 'Samata', 'Nashik');
+INSERT INTO C_Info values(6, 'Ankita', 'Chandwad');
+INSERT INTO C_Info values(7, 'Bhavika', 'Pune');
+INSERT INTO C_Info values(8, 'Deepa', 'Mumbai');
+INSERT INTO C_Info values(9, 'Nitin', 'Nagpur');
+INSERT INTO C_Info values(10,'Pooja', 'Pune');
+
+
+/*Creating Table A_Info*/
+CREATE TABLE A_Info(
+	C_Id INT,
+	Acc_Type VARCHAR(20),
+	Ammount INT
+);
+
+/*Inserting Records*/
+
+INSERT INTO A_Info Values(1, 'Current', 5000);
+INSERT INTO A_Info Values(2, 'Saving', 20000);
+INSERT INTO A_Info Values(3, 'Saving',70000);
+INSERT INTO A_Info Values(4, 'Saving', 50000);
+INSERT INTO A_Info Values(6, 'Current', 35000);
+INSERT INTO A_Info Values(7, 'Loan', 30000);
+INSERT INTO A_Info Values(8, 'Saving', 50000);
+INSERT INTO A_Info Values(9, 'Saving', 90000);
+INSERT INTO A_Info Values(10, 'Loan', 8000);
+INSERT INTO A_Info Values(11, 'Current', 45000);
+
+• Show the cname, Acc_Type, amount information of customer
+who is having an saving account.
+
+SELECT C_Info.C_Name,A_Info.Acc_Type,A_Info.Ammount
+FROM C_Info,A_Info 
+WHERE C_Info.C_Id = A_Info.C_Id
+AND
+A_Info.Acc_Type = 'Saving';
+
+
+• Display the data using Natural, left and right join.
+
+-> Natural Join
+SELECT C_Info.C_Id,C_Info.C_Name,A_Info.Ammount
+FROM C_Info
+INNER JOIN A_Info 
+ON C_Info.C_Id = A_Info.C_Id;
+
+-> Left Join
+SELECT C_Info.C_Id,C_Info.C_Name,A_Info.Ammount
+FROM C_Info
+LEFT JOIN A_Info 
+ON C_Info.C_Id = A_Info.C_Id;
+
+-> Right Join
+SELECT C_Info.C_Id,C_Info.C_Name,A_Info.Ammount
+FROM C_Info
+RIGHT JOIN A_Info 
+ON C_Info.C_Id = A_Info.C_Id;
+
+
+• Display the information of customers living in the same city as
+of ‘pooja’.
+
+SELECT C_Info.C_Id,C_Name,C_City,Acc_Type,Ammount 
+FROM A_Info,C_Info
+WHERE
+A_Info.C_Id = C_Info.C_Id
+AND 
+C_Info.C_City = (SELECT C_City FROM C_Info WHERE C_Name = 'Pooja');
+
+
+• Display the information of account, having less amount than
+average amount throughout the bank.
+ 
+SELECT * 
+FROM A_Info
+WHERE
+Ammount < (SELECT AVG(Ammount) FROM A_Info);
+
+
+• Display the C_id having maximum amount in account.
+
+SELECT C_Id
+FROM A_Info
+WHERE 
+Ammount = (SELECT MAX(Ammount) FROM A_Info);
+
+
+• Display the amount and acc_type of those customers
+whose amount is the minimum amount of that
+Acc_type.
+ 
+SELECT MIN(Ammount) as Ammount,Acc_Type
+FROM A_Info
+GROUP BY Acc_Type;
+
+• Display the amount of those accounts whose amount is
+higher than amount of any saving account amount.
+
+SELECT * 
+FROM A_Info
+WHERE Ammount > ANY (SELECT Ammount FROM A_Info WHERE Acc_Type = 'Saving');
+
+
+		

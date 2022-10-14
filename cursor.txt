@@ -1,0 +1,153 @@
+/* Creating Tables*/
+CREATE TABLE Old_Roll(
+	RollNo VARCHAR(8),
+	Name VARCHAR(50)
+);
+
+CREATE TABLE New_Roll(
+	RollNo VARCHAR(8),
+	Name VARCHAR(50)
+);
+
+/*Inserting Records*/
+
+INSERT INTO Old_Roll VALUES('TEAI&D01','Hardik Majethia');
+INSERT INTO Old_Roll VALUES('TEAI&D02','Kunal Patil');
+INSERT INTO Old_Roll VALUES('TEAI&D03','Sahil Patil');
+INSERT INTO Old_Roll VALUES('TEAI&D04','Vivek Harwani');
+INSERT INTO Old_Roll VALUES('TEAI&D05','Sakshi Shimpi');
+INSERT INTO Old_Roll VALUES('TEAI&D06','Gauri Agjar');
+INSERT INTO Old_Roll VALUES('TEAI&D07','Vaishnavi Gohad');
+
+INSERT INTO New_Roll VALUES('TEAI&D02','Kunal Patil');
+INSERT INTO New_Roll VALUES('TEAI&D04','Vivek Harwani');
+INSERT INTO New_Roll VALUES('TEAI&D06','Gauri Agjar');
+INSERT INTO New_Roll VALUES('TEAI&D07','Vaishnavi Gohad');
+
+
+/* Creating Procedure with Cursor to Merge Records*/
+
+DROP PROCEDURE IF EXISTS MergeRollCalls;
+
+DELIMITER //
+
+CREATE PROCEDURE MergeRollCalls()
+BEGIN 
+	DECLARE n_roll VARCHAR(8);
+	DECLARE o_roll VARCHAR(8);
+	DECLARE o_name VARCHAR(50);
+	DECLARE no_rec_found BOOLEAN;
+	DECLARE rec_count INT DEFAULT 0;
+	DECLARE I INT DEFAULT 0;
+	DECLARE c_merge_recs CURSOR FOR SELECT RollNo,Name FROM Old_Roll;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET no_rec_found = TRUE;
+	
+	OPEN c_merge_recs;
+		rec_loop : LOOP
+			SET I = I + 1;
+			SET n_roll = '';
+			FETCH c_merge_recs INTO o_roll,o_name;
+			SELECT RollNo INTO n_roll FROM New_Roll WHERE RollNo = o_roll;
+			IF n_roll = '' THEN
+				select 'Inserted';
+				INSERT INTO New_Roll VALUES(o_roll,o_name);
+				SET rec_count = rec_count + 1;
+			END IF;
+			IF no_rec_found THEN 
+				select no_rec_found;
+				CLOSE c_merge_recs;
+				LEAVE rec_loop;
+			END IF;
+		END LOOP rec_loop;
+		select i;
+END;
+//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS MergeRollCalls;
+
+DELIMITER //
+
+CREATE PROCEDURE MergeRollCalls()
+BEGIN 
+	DECLARE n_roll VARCHAR(8);
+	DECLARE o_roll VARCHAR(8);
+	DECLARE o_name VARCHAR(50);
+	DECLARE no_rec_found BOOLEAN;
+	DECLARE rec_count INT DEFAULT 0;
+	DECLARE c_merge_recs CURSOR FOR SELECT RollNo,Name FROM Old_Roll;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET no_rec_found = TRUE;
+	
+	OPEN c_merge_recs;
+		rec_loop : LOOP
+			SET n_roll = '';
+			FETCH c_merge_recs INTO o_roll,o_name;
+			IF NOT EXISTS(SELECT RollNo FROM New_Roll WHERE RollNo = o_roll) THEN
+				select 'Inserted';
+				INSERT INTO New_Roll VALUES(o_roll,o_name);
+				SET rec_count = rec_count + 1;
+			END IF;
+			IF no_rec_found THEN 
+				CLOSE c_merge_recs;
+				LEAVE rec_loop;
+			END IF;
+		END LOOP rec_loop;
+END;
+//
+DELIMITER ;
+
+
+/*Entries In Tables Before Calling Procedure With Cursor*/
+
+mysql> SELECT * FROM Old_Roll;
++----------+-----------------+
+| RollNo   | Name            |
++----------+-----------------+
+| TEAI&D01 | Hardik Majethia |
+| TEAI&D02 | Kunal Patil     |
+| TEAI&D03 | Sahil Patil     |
+| TEAI&D04 | Vivek Harwani   |
+| TEAI&D05 | Sakshi Shimpi   |
+| TEAI&D06 | Gauri Agjar     |
+| TEAI&D07 | Vaishnavi Gohad |
++----------+-----------------+
+7 rows in set (0.00 sec)
+
+
+mysql> SELECT * FROM New_Roll;
++----------+-----------------+
+| RollNo   | Name            |
++----------+-----------------+
+| TEAI&D02 | Kunal Patil     |
+| TEAI&D04 | Vivek Harwani   |
+| TEAI&D06 | Gauri Agjar     |
+| TEAI&D07 | Vaishnavi Gohad |
++----------+-----------------+
+4 rows in set (0.00 sec)
+
+/* Output */
+
+mysql>call MergeRollCalls();
+
+/* Verifying Output */
+/* Checking Records of New_Roll Table */
+
+mysql> select * from New_Roll;
++----------+-----------------+
+| RollNo   | Name            |
++----------+-----------------+
+| TEAI&D01 | Hardik Majethia |
+| TEAI&D02 | Kunal Patil     |
+| TEAI&D03 | Sahil Patil     |
+| TEAI&D04 | Vivek Harwani   |
+| TEAI&D05 | Sakshi Shimpi   |
+| TEAI&D06 | Gauri Agjar     |
+| TEAI&D07 | Vaishnavi Gohad |
++----------+-----------------+
+7 rows in set (0.00 sec)
+
+
+
+
+

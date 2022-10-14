@@ -1,0 +1,194 @@
+Que 1
+/*Creating Collection*/
+
+DB_LAB> db.createCollection('Orders')
+{ ok: 1 }
+
+/*Inserting Documents*/
+
+DB_LAB> db.Orders.insert({ "_id" : 3, "item" : "xyz", "price" : 5, "quantity" : 10, "date" : new Date("2014-03-15T09:00:00Z") })
+{ acknowledged: true, insertedIds: { '0': 3 } }
+
+DB_LAB> db.Orders.insert({ "_id" : 1, "item" : "abc", "price" : 10, "quantity" : 2, "date": new Date("2014-03-01T08:00:00Z") })
+{ acknowledged: true, insertedIds: { '0': 1 } }
+
+DB_LAB> db.Orders.insert({ "_id" : 2, "item" : "jkl", "price" : 20, "quantity" : 1, "date" : new Date("2014-03-01T09:00:00Z") })
+{ acknowledged: true, insertedIds: { '0': 2 } }
+
+DB_LAB> db.Orders.insert({ "_id" : 4, "item" : "xyz", "price" : 5, "quantity" : 20, "date" : new Date ("2014-04-04T11:21:39.736Z") })
+{ acknowledged: true, insertedIds: { '0': 4 } }
+
+DB_LAB> db.Orders.insert({ "_id" : 5, "item" : "abc", "price" : 10, "quantity" : 10, "date" : new Date("2014-04-04T21:23:13.331Z") })
+{ acknowledged: true, insertedIds: { '0': 5 } }
+
+
+db.Orders.aggregate([
+ 	{ 
+ 		$group: { 
+ 			_id: { 
+ 				$dateToString: {
+ 					format :'%Y-%m-%d',date : '$date'
+ 				}
+ 			},
+ 			TotalPrice : { 
+ 				$sum : {
+ 					$multiply : ["$price","$quantity"]
+ 				}
+ 			},
+ 			AverageQty : {
+ 				$avg : "$quantity"
+ 			},
+ 			ItemCount : {
+ 				$sum : "$quantity"
+ 			}
+ 		} 
+ 	}
+])
+
+-----Output------
+
+[
+  { _id: '2014-03-01', TotalPrice: 40, AverageQty: 1.5, ItemCount: 3 },
+  { _id: '2014-03-15', TotalPrice: 50, AverageQty: 10, ItemCount: 10 },
+  { _id: '2014-04-04', TotalPrice: 200, AverageQty: 15, ItemCount: 30 }
+]
+
+Que 2:
+
+DB_LAB> db.Orders.distinct("item")
+[ 'abc', 'jkl', 'xyz' ]
+
+
+Que 3
+
+/* Creating Collecction */
+
+DB_LAB> db.createCollection('Population')
+{ ok: 1 }
+
+/* Inserting Docuemnts */
+
+
+DB_LAB> db.Population.insert({ "_id": "10280",
+... "country": "USA",
+... "city": "NEW YORK",
+... "state": "NY",
+... "pop": 5574,
+... "loc": [ -74.016323, 40.710537]
+... })
+{ acknowledged: true, insertedIds: { '0': '10280' } }
+
+DB_LAB> db.Population.insert({ "_id": "10281",
+... "country": "USA",
+... "city": "ABC",
+... "state": "NY",
+... "pop": 43434,
+... "loc": [ -74.01432423, 42.74343537]
+... })
+{ acknowledged: true, insertedIds: { '0': '10281' } }
+
+DB_LAB> db.Population.insert({ "_id": "10282",
+... "country": "USA",
+... "city": "xyz",
+... "state": "New State",
+... "pop": 4134,
+... "loc": [ -23.01432423, 90.74343537]
+... })
+{ acknowledged: true, insertedIds: { '0': '10282' } }
+ 
+
+/* For all documents of USA, report the states having total population > 5	,000 */
+
+db.Population.aggregate([
+	{ 
+		$match : {
+			country : "USA"
+		}
+	},
+	{
+		$group : {
+			_id : "$state",
+			TotalPopulation : {$sum : "$pop"}
+		}
+	},
+	{ 
+		$match : {
+			TotalPopulation : {$gt : 5000}
+		}
+	}
+])
+
+---- Output -------
+
+[ { _id: 'NY', TotalPopulation: 49008 } ]
+
+
+/* For USA, Report for each state, the average population across its
+cities */
+
+db.Population.aggregate([
+	{ 
+		$match : {
+			country : "USA"
+		}
+	},
+	{
+		$group : {
+			_id : "$state",
+			AvgPopulation : {$avg : "$pop"}
+		}
+	}
+])
+
+----OutPut----
+
+[
+  { _id: 'NY', AvgPopulation: 24504 },
+  { _id: 'New State', AvgPopulation: 4134 }
+]
+
+/ *For each state, return the largest and the smallest city along
+with their population. * /
+
+db.Population.aggregate([
+	{ 
+		$match : {
+			country : "USA"
+		}
+	},
+	{
+		$group : {
+			_id : "$state",
+			"MaxPopCity" : {
+				"$max" :{
+					"pop":"$pop",
+					"city":"$city"
+				} 
+			},
+			"MinPopCity" : {
+				"$min" :{
+					"pop":"$pop",
+					"city":"$city"
+				} 
+			},
+		}
+	}
+])
+
+----Output-----
+
+[
+  {
+    _id: 'NY',
+    MaxPopCity: { pop: 43434, city: 'ABC' },
+    MinPopCity: { pop: 5574, city: 'NEW YORK' }
+  },
+  {
+    _id: 'New State',
+    MaxPopCity: { pop: 4134, city: 'xyz' },
+    MinPopCity: { pop: 4134, city: 'xyz' }
+  }
+]
+
+
+

@@ -1,0 +1,52 @@
+/* Trigger */
+
+DELIMITER //
+CREATE TRIGGER ReturnBook 
+BEFORE UPDATE 
+ON Borrower
+FOR EACH ROW
+BEGIN
+	IF NEW.Status = 'R' THEN
+		INSERT INTO Fine Values(New.RNo,CURDATE(),null);
+	END IF;
+END;
+//
+DELIMITER ;
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+/* OUTPUT */
+
+mysql> UPDATE Borrower SET Status = 'R' WHERE RNo = 73 AND BookName = 'Android';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+/* Verifying Borrower Table*/
+
+mysql> select * from Borrower;
++------+--------+------------+----------+--------+
+| RNo  | Name   | DIO        | BookName | Status |
++------+--------+------------+----------+--------+
+|   76 | Kunal  | 2022-08-13 | Java     | R      |
+|   75 | Sahil  | 2022-06-11 | C        | R      |
+|   74 | Vivek  | 2022-02-23 | C++      | R      |
+|   73 | Sakshi | 2022-01-03 | Android  | R      |
+|   72 | Sonu   | 2022-02-13 | C#       | I      |
++------+--------+------------+----------+--------+
+
+/* Verifying Fine Table*/
+
+mysql> SELECT * FROM Fine;
++------+------------+---------+
+| RNo  | ReturnDate | Ammount |
++------+------------+---------+
+|   76 | 2022-09-08 |     130 |
+|   73 | 2022-09-08 |    NULL |
++------+------------+---------+
+2 rows in set (0.00 sec)
+
+/* Since the fine is not calculated its value is set to NULL*/
+
+	
+		

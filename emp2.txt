@@ -1,0 +1,65 @@
+mysql> desc Emp;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| EId   | int         | YES  |     | NULL    |       |
+| EName | varchar(20) | YES  |     | NULL    |       |
+| EDept | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc Dept;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| DNo   | int         | YES  |     | NULL    |       |
+| DName | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> Desc Address;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| DName     | varchar(20) | YES  |     | NULL    |       |
+| DLocation | varchar(20) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+
+i)
+
+mysql> SELECT EDept  FROM Emp WHERE EId = 1011;
++--------------+
+| EDept        |
++--------------+
+| Developement |
++--------------+
+
+ii)
+mysql> 
+mysql> SELECT DLocation
+    -> FROM Address 
+    -> WHERE DName = (SELECT EDept from Emp WHERE EName = 'Kunal');
++-----------+
+| DLocation |
++-----------+
+| Pune      |
++-----------+
+1 row in set (0.01 sec)
+
+iii)
+mysql>  SELECT EDept,COUNT(*) as No_Of_Emps
+    -> FROM Emp 
+    -> GROUP BY EDept;
++--------------+------------+
+| EDept        | No_Of_Emps |
++--------------+------------+
+| Developement |          2 |
+| R&D          |          1 |
+| Testing      |          2 |
++--------------+------------+
+3 rows in set (0.00 sec)
+
+
+
+

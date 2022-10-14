@@ -1,0 +1,51 @@
+mysql> CREATE TABLE Account(Cid INT,Balance INT);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into Account values(101,42453);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Account values(102,4453);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Account values(103,12453);
+Query OK, 1 row affected (0.00 sec)
+
+
+DROP PROCEDURE validateTranscation;
+
+DELIMITER //
+CREATE PROCEDURE validateTranscation(id INT,ammount INT)
+BEGIN  
+	DECLARE invalid_trans CONDITION FOR SQLSTATE '45001';
+	DECLARE temp INT DEFAULT 0;
+	
+	SELECT Balance INTO temp FROM Account WHERE Cid = id;
+	IF (temp - ammount) < 0 THEN
+		SIGNAL invalid_trans
+		SET MESSAGE_TEXT = 'Cannot Complete Transaction, Transaction Ammount is greater than Account Balance';
+	ELSE 
+		UPDATE Account SET Balance = (temp - ammount) WHERE Cid = id;
+		Select 'Transactio Successful' as Mesaage;
+	END IF;
+END
+//
+
+DELIMITER ;
+
+/*Output*/
+
+mysql> call validateTranscation(101,200);
++-----------------------+
+| Mesaage               |
++-----------------------+
+| Transactio Successful |
++-----------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call validateTranscation(101,3445454);
+ERROR 1644 (45001): Cannot Complete Transaction, Transaction Ammount is greater than Account Balance
+mysql> 
+
+

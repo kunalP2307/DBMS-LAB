@@ -1,0 +1,107 @@
+/* Creating Tables */
+Schema:
+1. Borrower(Roll_no, Name, DateofIssue, NameofBook, Status)
+
+mysql> DESC Borrower;
+
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| RNo      | int         | YES  |     | NULL    |       |
+| Name     | varchar(20) | YES  |     | NULL    |       |
+| DIO      | date        | YES  |     | NULL    |       |
+| BookName | varchar(20) | YES  |     | NULL    |       |
+| Status   | varchar(1)  | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+2.Fine(Roll_no,Date,Amt)
+
+mysql> desc Fine;
++------------+------+------+-----+---------+-------+
+| Field      | Type | Null | Key | Default | Extra |
++------------+------+------+-----+---------+-------+
+| RNo        | int  | YES  |     | NULL    |       |
+| ReturnDate | date | YES  |     | NULL    |       |
+| Ammount    | int  | YES  |     | NULL    |       |
++------------+------+------+-----+---------+-------+
+
+/* Inserting Records */
+
+INSERT INTO Borrower Values(76,'Kunal','2022-08-13','Java','I');
+INSERT INTO Borrower Values(75,'Sahil','2022-06-11','C','I');
+INSERT INTO Borrower Values(74,'Vivek','2022-02-23','C++','I');
+INSERT INTO Borrower Values(73,'Sakshi','2022-01-03','Android','I');
+INSERT INTO Borrower Values(72,'Sonu','2022-02-13','C#','I');
+
+/* Creating Procedure */
+DROP PROCEDURE CalcFine;
+DELIMITER //
+CREATE PROCEDURE CalcFine(RollNo INT,BName VARCHAR(20))
+BEGIN 
+	DECLARE d DATE DEFAULT '0001-01-01';
+	DECLARE no_rec_found CONDITION FOR SQLSTATE '45000';
+	DECLARE DateDif INT;
+	DECLARE FineAmm INT DEFAULT 0;
+	SELECT DIO INTO d FROM Borrower WHERE RNo = RollNo AND BookName = BName;
+	
+	IF d = '0001-01-01' THEN
+		SIGNAL no_rec_found 
+		SET MESSAGE_TEXT = 'No Record Found for Given Data';
+	ELSE	
+		SET DateDif = DATEDIFF(CURDATE(),d);
+		IF DateDif > 30 THEN
+			SET FineAmm = (DateDif - 30) * 50;
+			SET FineAmm = FineAmm + 30*5;
+		END IF;
+		IF DateDif > 15 AND DateDif < 30 THEN
+			SET FineAmm = DateDif * 5;
+		END IF;
+		
+		INSERT INTO Fine Values(RollNo,CURDATE(),FineAmm);
+		UPDATE Borrower SET Status = 'R' WHERE RNo = RollNo AND BookName = BName;
+		SELECT 'Transaction Succsseful' as Message;
+	END IF;
+END;
+//
+DELIMITER ;
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+SET @RollNo = 76;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SET @BookName = 'Java';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL CalcFine(@RollNo,@BookName);
+
++------------------------+
+| Message                |
++------------------------+
+| Transaction Succsseful |
++------------------------+
+1 row in set (0.00 sec)
+
+/* Verifing Fine Table*/
+
+mysql> SELECT * from Fine;
++------+------------+---------+
+| RNo  | ReturnDate | Ammount |
++------+------------+---------+
+|   76 | 2022-09-08 |     130 |
++------+------------+---------+
+1 row in set (0.00 sec)
+
+/* Verifing Borrower Table*/
+
+mysql> select * from Borrower;
++------+--------+------------+----------+--------+
+| RNo  | Name   | DIO        | BookName | Status |
++------+--------+------------+----------+--------+
+|   76 | Kunal  | 2022-08-13 | Java     | R      |
+|   75 | Sahil  | 2022-06-11 | C        | I      |
+|   74 | Vivek  | 2022-02-23 | C++      | I      |
+|   73 | Sakshi | 2022-01-03 | Android  | I      |
+|   72 | Sonu   | 2022-02-13 | C#       | I      |
++------+--------+------------+----------+--------+
